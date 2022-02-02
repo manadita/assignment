@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">NUMAD21Fa_YuZou</string>
+    <string name="about_me">About Me</string>
+    <string name="b">B</string>
+    <string name="a">A</string>
+    <string name="e">E</string>
+    <string name="c">C</string>
+    <string name="d">D</string>
+    <string name="f">F</string>
+    <string name="pressed">Pressed: -</string>
 </resources>
