@@ -2,6 +2,7 @@ package edu.neu.madcourse.numad21fa_yuzou;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -24,32 +25,29 @@ public class MainActivity extends AppCompatActivity {
         Button buttonD = findViewById(R.id.button_d);
         Button buttonE = findViewById(R.id.button_e);
         Button buttonF = findViewById(R.id.button_f);
+        Button buttonLink = findViewById(R.id.button_link);
         TextView textButtonPressed = findViewById(R.id.textView_buttonpressed);
         textButtonPressed.setText("Pressed: - ");
         textButtonPressed.setGravity(Gravity.CENTER);
-        buttonAboutMe.setOnClickListener(new MyClickListener());
+        buttonAboutMe.setOnClickListener(new MyButtoListener());
         buttonA.setOnClickListener(new MyButtoListener());
         buttonB.setOnClickListener(new MyButtoListener());
         buttonC.setOnClickListener(new MyButtoListener());
         buttonD.setOnClickListener(new MyButtoListener());
         buttonE.setOnClickListener(new MyButtoListener());
         buttonF.setOnClickListener(new MyButtoListener());
-    }
+        buttonLink.setOnClickListener(new MyButtoListener());
 
-    class MyClickListener implements View.OnClickListener{
-        @Override
-        public void onClick(View view) {
-            if(view.getId() == R.id.button_about_me){
-                Toast.makeText(MainActivity.this,
-                        "Mana Yu Zou: zou.yu1@northeastern.edu", Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
     class MyButtoListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
             switch (view.getId()){
+                case R.id.button_about_me:
+                    Toast.makeText(MainActivity.this,
+                            "Mana Yu Zou: zou.yu1@northeastern.edu",
+                            Toast.LENGTH_LONG).show();
                 case R.id.button_a:
                     TextView textPressedA = findViewById(R.id.textView_buttonpressed);
                     textPressedA.setGravity(Gravity.CENTER);
@@ -80,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
                     textPressedF.setGravity(Gravity.CENTER);
                     textPressedF.setText("Pressed: F ");
                     break;
+                case R.id.button_link:
+                    Intent intent = new Intent(MainActivity.this,
+                            RecyelerViewActivity.class);
+                    startActivity(intent);
             }
         }
     }
