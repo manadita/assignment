@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this,
                             "Mana Yu Zou: zou.yu1@northeastern.edu",
                             Toast.LENGTH_LONG).show();
+                    break;
                 case R.id.button_a:
                     TextView textPressedA = findViewById(R.id.textView_buttonpressed);
                     textPressedA.setGravity(Gravity.CENTER);
