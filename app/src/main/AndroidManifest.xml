@@ -9,6 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_zy_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD21Fa_YuZou">
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/creat_link_dialog" />
+
         <activity
             android:name=".RecyelerViewActivity"
             android:exported="false" />

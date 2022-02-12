@@ -17,22 +17,22 @@ public class RviewAdapter extends RecyclerView.Adapter<RviewHolder>{
         this.linklist = linklist;
     }
 
-
-
     @Override
     public RviewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(
-                (R.layout.list_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.link_card, parent,false);
         return new RviewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RviewHolder holder, int position) {
         LinkCard currentlink = (LinkCard) linklist.get(position);
+
+        holder.linkName.setText(currentlink.getName());
+        holder.linkURL.setText(currentlink.getURL());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return linklist.size();
     }
 }

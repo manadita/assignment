@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -70,8 +71,9 @@ public class RecyelerViewActivity extends AppCompatActivity {
     }
 
     private void addLink(int position) {
-        linklist.add(position, new LinkCard(linkname, linkurl));
-        Snackbar.make().show();
+
+        linklist.add(position, new LinkCard("name1", "url1"));
+        Snackbar.make(rview, "Link added", BaseTransientBottomBar.LENGTH_LONG).show();
         rviewAdapter.notifyItemInserted(position);
     }
 
@@ -81,6 +83,7 @@ public class RecyelerViewActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.floatingAB_addlink:
+                    // create dialog.
                     int pos = 0;
                     addLink(pos);
                     break;

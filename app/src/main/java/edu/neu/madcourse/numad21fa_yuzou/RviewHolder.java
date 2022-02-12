@@ -1,10 +1,7 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RviewHolder extends RecyclerView.ViewHolder{
