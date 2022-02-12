@@ -1,12 +1,15 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -18,6 +21,8 @@ import java.util.Map;
 
 public class RecyelerViewActivity extends AppCompatActivity {
     private List<ILinkCard> linklist = new ArrayList<>();
+    private String linkname;
+    private String linkurl;
     private RecyclerView rview;
     private RviewAdapter rviewAdapter;
     private FloatingActionButton buttonAddLink;
@@ -72,9 +77,37 @@ public class RecyelerViewActivity extends AppCompatActivity {
 
     private void addLink(int position) {
 
-        linklist.add(position, new LinkCard("name1", "url1"));
-        Snackbar.make(rview, "Link added", BaseTransientBottomBar.LENGTH_LONG).show();
-        rviewAdapter.notifyItemInserted(position);
+        // create link dialog
+        AlertDialog.Builder createLinkDialog = new AlertDialog.Builder(RecyelerViewActivity.this);
+        createLinkDialog.setTitle("Create New Link");
+        final View dialogview = getLayoutInflater().inflate(R.layout.create_link_dialog, null);
+        createLinkDialog.setView(dialogview);
+        createLinkDialog.setCancelable(true);
+        createLinkDialog.setPositiveButton("Add Link", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                EditText et_name = (EditText) dialogview.findViewById(R.id.editText_name);
+                EditText et_url = (EditText) dialogview.findViewById(R.id.editText_url);
+                linkname = et_name.getText().toString();
+                linkurl = et_url.getText().toString();
+                if (linkname != "" && linkurl != "") {
+                    linklist.add(position, new LinkCard(linkname, linkurl));
+                    Snackbar.make(rview, "Link added", BaseTransientBottomBar.LENGTH_LONG).show();
+                    rviewAdapter.notifyItemInserted(position);
+                }
+                else {
+
+                };
+                dialogInterface.cancel();
+            }
+        });
+        createLinkDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        createLinkDialog.show();
     }
 
 
@@ -83,7 +116,6 @@ public class RecyelerViewActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.floatingAB_addlink:
-                    // create dialog.
                     int pos = 0;
                     addLink(pos);
                     break;

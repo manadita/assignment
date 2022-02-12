@@ -11,7 +11,7 @@
         android:theme="@style/Theme.NUMAD21Fa_YuZou">
         <meta-data
             android:name="com.google.android.actions"
-            android:resource="@xml/creat_link_dialog" />
+            android:resource="@layout/create_link_dialog" />
 
         <activity
             android:name=".RecyelerViewActivity"
