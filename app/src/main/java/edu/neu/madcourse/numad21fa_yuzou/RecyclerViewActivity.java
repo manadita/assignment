@@ -89,14 +89,15 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 linkurl = et_url.getText().toString();
                 // if edit text is not empty， add link.
                 if (linkname != "" && linkurl != "") {
-                    //linklist.add(new LinkCard(linkname, linkurl));
-                    // infor user link is added, and offer option to undo this action.
+                    linklist.add(new LinkCard(linkname, linkurl));
+                    rviewAdapter.notifyDataSetChanged();
+                    // inform user link is added, and offer option to undo this action.
                     Snackbar snackbar = Snackbar.make(
                             rview, "Link added", Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction("Undo", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    linklist.remove(linklist.size());   // remove the last input link.
+                                    //linklist.remove(linklist.size());   // remove the last input link.
                                     Toast.makeText(
                                             RecyclerViewActivity.this,
                                             "Action is undone",
@@ -106,7 +107,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
                             });
                     snackbar.getView().setOnClickListener(view -> snackbar.dismiss());
                     snackbar.show();
-                    //rviewAdapter.notifyItemInserted(0);
                 }
                 // if edite text is empty. ask user to input something.
                 else {
@@ -116,6 +116,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
                 };
+                rviewAdapter.notifyDataSetChanged();
                 dialogInterface.cancel();
             }
         });
