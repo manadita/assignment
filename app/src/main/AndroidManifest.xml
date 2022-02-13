@@ -14,8 +14,9 @@
             android:resource="@layout/create_link_dialog" />
 
         <activity
-            android:name=".RecyelerViewActivity"
+            android:name=".RecyclerViewActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

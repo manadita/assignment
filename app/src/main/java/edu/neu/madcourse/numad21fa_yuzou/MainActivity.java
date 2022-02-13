@@ -80,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     textPressedF.setText("Pressed: F ");
                     break;
                 case R.id.button_link:
-                    Intent intent = new Intent(MainActivity.this,
-                            RecyelerViewActivity.class);
+                    Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
                     startActivity(intent);
             }
         }

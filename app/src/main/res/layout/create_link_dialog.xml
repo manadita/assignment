@@ -6,11 +6,17 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <TextView
         android:id="@+id/text_infoname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Name"
+        android:text="    Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -22,7 +28,8 @@
         android:layout_weight="1"
         android:ems="10"
         android:hint="Input name of the link"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:minHeight="48dp" />
 
     <TextView
         android:id="@+id/text_infourl"
@@ -30,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:lineSpacingExtra="14sp"
-        android:text="URL"
+        android:text="    URL"
         android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="16sp"
@@ -43,6 +50,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:hint="Input URL fo the link"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:minHeight="48dp" />
 
 </LinearLayout>
