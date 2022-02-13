@@ -1,5 +1,6 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -35,9 +37,21 @@ public class RecyelerViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recyelerview);
         init(savedInstanceState);
-
+        createRecyclerView();
         buttonAddLink = findViewById(R.id.floatingAB_addlink);
         buttonAddLink.setOnClickListener(new MyButtoListener());
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int size = linklist == null ? 0 : linklist.size();
+        outState.putInt(NUMBER_OF_ITEMS, size);
+        for (int i = 0; i < size; i ++) {
+            outState.putString(KEY_OF_INSTANCE + i + 0, linklist.get(i).getName());
+            outState.putString(KEY_OF_INSTANCE + i + 1, linklist.get(i).getURL());
+        }
+        super.onSaveInstanceState(outState);
     }
 
     private void init(Bundle savedInstanceState){
@@ -50,7 +64,6 @@ public class RecyelerViewActivity extends AppCompatActivity {
         if (savedInstanceState != null && savedInstanceState.containsKey(NUMBER_OF_ITEMS)){
             if (linklist == null || linklist.size() == 0) {
                 int size = savedInstanceState.getInt(NUMBER_OF_ITEMS);
-
                 for (int i = 0; i < size; i ++) {
                     Integer linkID = savedInstanceState.getInt(KEY_OF_INSTANCE + i + "0");
                     String linkName = savedInstanceState.getString(KEY_OF_INSTANCE + i + "1");
@@ -63,7 +76,8 @@ public class RecyelerViewActivity extends AppCompatActivity {
         }
         // first time open this activity.
         else {
-
+            ILinkCard card1 = new LinkCard("Name example 1", "http://www.urlexample.com");
+            linklist.add(card1);
         }
     }
 
@@ -75,14 +89,17 @@ public class RecyelerViewActivity extends AppCompatActivity {
         rview.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void addLink(int position) {
-
+    /**
+     * Add a link to recycler view.
+     */
+    private void addLink() {
         // create link dialog
         AlertDialog.Builder createLinkDialog = new AlertDialog.Builder(RecyelerViewActivity.this);
         createLinkDialog.setTitle("Create New Link");
         final View dialogview = getLayoutInflater().inflate(R.layout.create_link_dialog, null);
         createLinkDialog.setView(dialogview);
         createLinkDialog.setCancelable(true);
+
         createLinkDialog.setPositiveButton("Add Link", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -90,17 +107,35 @@ public class RecyelerViewActivity extends AppCompatActivity {
                 EditText et_url = (EditText) dialogview.findViewById(R.id.editText_url);
                 linkname = et_name.getText().toString();
                 linkurl = et_url.getText().toString();
+                // if edit text is not empty， add link.
                 if (linkname != "" && linkurl != "") {
-                    linklist.add(position, new LinkCard(linkname, linkurl));
-                    Snackbar.make(rview, "Link added", BaseTransientBottomBar.LENGTH_LONG).show();
-                    rviewAdapter.notifyItemInserted(position);
+                    linklist.add(0, new LinkCard(linkname, linkurl));
+                    // infor user link is added, and offer option to undo this action.
+                    Snackbar snackbar = Snackbar.make(
+                            rview, "Link added", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("Undo", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    linklist.remove(0);                 // remove the first link.
+                                    Toast.makeText(
+                                            RecyelerViewActivity.this,
+                                            "Action is undone",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            });
+                    snackbar.getView().setOnClickListener(view -> snackbar.dismiss());
+                    snackbar.show();
+                    rviewAdapter.notifyItemInserted(0);
                 }
+                // if edite text is empty. ask user to input something.
                 else {
 
                 };
                 dialogInterface.cancel();
             }
         });
+
         createLinkDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -116,8 +151,7 @@ public class RecyelerViewActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.floatingAB_addlink:
-                    int pos = 0;
-                    addLink(pos);
+                    addLink();
                     break;
             }
         }

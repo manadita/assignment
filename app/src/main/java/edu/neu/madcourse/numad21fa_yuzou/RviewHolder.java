@@ -5,11 +5,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RviewHolder extends RecyclerView.ViewHolder{
+    public TextView linkID;
     public TextView linkName;
     public TextView linkURL;
 
     public RviewHolder(View itemView) {
         super(itemView);
+        linkID = itemView.findViewById(R.id.link_id);
         linkName = itemView.findViewById(R.id.link_name);
         linkURL = itemView.findViewById(R.id.link_url);
     }
