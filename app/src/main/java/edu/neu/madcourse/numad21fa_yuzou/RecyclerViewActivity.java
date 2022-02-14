@@ -31,6 +31,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recyclerview);
+        linklist = new ArrayList<>();
         initialLinkDate();
         createRecyclerView();
         buttonAddLink = findViewById(R.id.fab_add);
@@ -38,7 +39,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
     }
 
     private void initialLinkDate(){
-        linklist = new ArrayList<>();
         linklist.add(new LinkCard("Name Example", "http://www.URLexample.com"));
     }
 
@@ -68,20 +68,21 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 EditText et_url = (EditText) dialogview.findViewById(R.id.editText_url);
                 linkname = et_name.getText().toString();
                 linkurl = et_url.getText().toString();
+
                 // if edit text is not empty， add link.
                 if (linkname != "" && linkurl != "") {
-                    linklist.add(new LinkCard(linkname, linkurl));
-                    rviewAdapter.notifyDataSetChanged();
+                    addLinkCard();
                     // inform user link is added, and offer option to undo this action.
                     Snackbar snackbar = Snackbar.make(
-                            rview, "Link added", Snackbar.LENGTH_INDEFINITE);
+                            rview, "Link added",
+                            Snackbar.LENGTH_INDEFINITE);
                     snackbar.setAction("Undo", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    //linklist.remove(linklist.size());   // remove the last input link.
+                                    delLinkCard();
                                     Toast.makeText(
                                             RecyclerViewActivity.this,
-                                            "Action is undone",
+                                            "Link is deleted",
                                             Toast.LENGTH_SHORT
                                     ).show();
                                 }
@@ -97,7 +98,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
                 };
-                rviewAdapter.notifyDataSetChanged();
                 dialogInterface.cancel();
             }
         });
@@ -109,6 +109,27 @@ public class RecyclerViewActivity extends AppCompatActivity {
             }
         });
         createLinkDialog.show();
+    }
+
+    private void delLinkCard() {
+        linklist.remove(linklist.size() - 1);
+        if (linklist.size() == 0 || linklist == null){
+            initialLinkDate();
+            Toast.makeText(
+                    RecyclerViewActivity.this,
+                    "intial link data.",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+        rviewAdapter.notifyDataSetChanged();
+    }
+
+    private void addLinkCard() {
+        linklist.add(new LinkCard(linkname, linkurl));
+        if (linklist.get(0).getName().equals("Name Example")){
+            linklist.remove(0);
+        }
+        rviewAdapter.notifyDataSetChanged();
     }
 
 
