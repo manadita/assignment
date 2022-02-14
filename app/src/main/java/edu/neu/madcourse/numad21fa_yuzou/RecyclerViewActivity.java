@@ -3,6 +3,7 @@ package edu.neu.madcourse.numad21fa_yuzou;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,48 +26,28 @@ public class RecyclerViewActivity extends AppCompatActivity {
     private RecyclerView rview;
     private RviewAdapter rviewAdapter;
     private FloatingActionButton buttonAddLink;
-    private static final String KEY_OF_INSTANCE = "KEY_OF_INSTANCE";
-    private static final String NUMBER_OF_ITEMS = "NUMBER_OF_ITEMS";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recyclerview);
-        init(savedInstanceState);
+        initialLinkDate();
         createRecyclerView();
         buttonAddLink = findViewById(R.id.fab_add);
         buttonAddLink.setOnClickListener(new MyButtoListener());
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        int size = linklist == null ? 0 : linklist.size();
-        outState.putInt(NUMBER_OF_ITEMS, size);
-        for (int i = 0; i < size; i ++) {
-            outState.putString(KEY_OF_INSTANCE + i + 0, linklist.get(i).getName());
-            outState.putString(KEY_OF_INSTANCE + i + 1, linklist.get(i).getURL());
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-    private void init(Bundle savedInstanceState){
-        initialLinkDate(savedInstanceState);
-        createRecyclerView();
-    }
-
-    private void initialLinkDate(Bundle savedInstanceState){
+    private void initialLinkDate(){
         linklist = new ArrayList<>();
         linklist.add(new LinkCard("Name Example", "http://www.URLexample.com"));
     }
 
     private void createRecyclerView() {
         rview = findViewById(R.id.recyclerView);
-        rview.setHasFixedSize(true);
         rviewAdapter = new RviewAdapter(linklist);
-        rview.setAdapter(rviewAdapter);
         rview.setLayoutManager(new LinearLayoutManager(this));
+        rview.setItemAnimator(new DefaultItemAnimator());
+        rview.setAdapter(rviewAdapter);
     }
 
     /**

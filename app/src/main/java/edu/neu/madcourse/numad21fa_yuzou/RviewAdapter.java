@@ -14,10 +14,6 @@ import java.util.List;
 public class RviewAdapter extends RecyclerView.Adapter<RviewHolder>{
     private final List<ILinkCard> linklist;
 
-    /**
-     * Constructor
-     * @param linklist
-     */
     public RviewAdapter(List<ILinkCard> linklist) {
         this.linklist = linklist;
     }
@@ -33,10 +29,10 @@ public class RviewAdapter extends RecyclerView.Adapter<RviewHolder>{
     // bind data to the TextView in each row.
     @Override
     public void onBindViewHolder(RviewHolder holder, int position) {
-        ILinkCard currentlink = (LinkCard) linklist.get(position);
+        ILinkCard card = (LinkCard) linklist.get(position);
         //holder.linkID.setText(position);
-        holder.linkName.setText(currentlink.getName());
-        holder.linkURL.setText(currentlink.getURL());
+        holder.linkName.setText(card.getName());
+        holder.linkURL.setText(card.getURL());
     }
 
     @Override
