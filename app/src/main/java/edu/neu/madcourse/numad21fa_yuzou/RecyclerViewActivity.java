@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,7 +27,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
     private String linkurl;
     private RecyclerView rview;
     private RviewAdapter rviewAdapter;
-    private FloatingActionButton buttonAddLink;
+    AlertDialog.Builder failalert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         linklist = new ArrayList<>();
         initialLinkDate();
         createRecyclerView();
-        buttonAddLink = findViewById(R.id.fab_add);
+        FloatingActionButton buttonAddLink = findViewById(R.id.fab_add);
         buttonAddLink.setOnClickListener(new MyButtoListener());
     }
 
@@ -55,9 +57,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
      */
     private void addLink() {
         // create link dialog
-        AlertDialog.Builder createLinkDialog = new AlertDialog.Builder(RecyclerViewActivity.this);
+        AlertDialog.Builder createLinkDialog = new AlertDialog.Builder(
+                RecyclerViewActivity.this);
         createLinkDialog.setTitle("Create New Link");
-        final View dialogview = getLayoutInflater().inflate(R.layout.create_link_dialog, null);
+        final View dialogview = getLayoutInflater().inflate(
+                R.layout.create_link_dialog, null);
         createLinkDialog.setView(dialogview);
         createLinkDialog.setCancelable(true);
 
@@ -69,35 +73,39 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 linkname = et_name.getText().toString();
                 linkurl = et_url.getText().toString();
 
-                // if edit text is not empty， add link.
-                if (linkname != "" && linkurl != "") {
-                    addLinkCard();
-                    // inform user link is added, and offer option to undo this action.
-                    Snackbar snackbar = Snackbar.make(
-                            rview, "Link added",
-                            Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction("Undo", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    delLinkCard();
-                                    Toast.makeText(
-                                            RecyclerViewActivity.this,
-                                            "Link is deleted",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-                                }
-                            });
-                    snackbar.getView().setOnClickListener(view -> snackbar.dismiss());
-                    snackbar.show();
+
+                // check if name is empty.
+                if (TextUtils.isEmpty(et_name.getText())) {
+                    failalert = new AlertDialog.Builder(
+                            (RecyclerViewActivity.this));
+                    eidtLinkFailAlert("Name can not be blank.");
+                    failalert.show();
                 }
-                // if edite text is empty. ask user to input something.
                 else {
-                    Toast.makeText(
-                            RecyclerViewActivity.this,
-                            "Must input both name and URL for the link.",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                };
+                    // check if url is valid.
+                    if (!URLUtil.isValidUrl(linkurl)) {
+                        failalert = new AlertDialog.Builder(
+                                (RecyclerViewActivity.this));
+                        eidtLinkFailAlert("The input URL is not valid.");
+                        failalert.show();
+                    }
+                    // if name is not empty and url is valid, add link.
+                    else {
+                        addLinkCard();
+                        // inform user link is added, and offer option to undo this action.
+                        Snackbar snackbar = Snackbar.make(
+                                rview, "Link successful added.",
+                                Snackbar.LENGTH_INDEFINITE);
+                        snackbar.setAction("Undo", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                delLinkCard();
+                            }
+                        });
+                        snackbar.getView().setOnClickListener(view -> snackbar.dismiss());
+                        snackbar.show();
+                    }
+                }
                 dialogInterface.cancel();
             }
         });
@@ -111,22 +119,52 @@ public class RecyclerViewActivity extends AppCompatActivity {
         createLinkDialog.show();
     }
 
+    private void eidtLinkFailAlert(String s) {
+        failalert.setTitle("Invalid Input").setMessage(s).setCancelable(true)
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(
+                                        RecyclerViewActivity.this,
+                                        "Fail. Link not added.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                dialogInterface.cancel();
+                            }
+                        })
+                .setPositiveButton("Re-Enter",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(
+                                        RecyclerViewActivity.this,
+                                        "Fail. Link not added.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                dialogInterface.cancel();
+                            }
+                        });
+    }
+
     private void delLinkCard() {
         linklist.remove(linklist.size() - 1);
+        // if this is the only data in list, add an example data.
         if (linklist.size() == 0 || linklist == null){
             initialLinkDate();
-            Toast.makeText(
-                    RecyclerViewActivity.this,
-                    "intial link data.",
-                    Toast.LENGTH_SHORT
-            ).show();
         }
+        Toast.makeText(
+                RecyclerViewActivity.this,
+                "Link successful deleted",
+                Toast.LENGTH_SHORT
+        ).show();
         rviewAdapter.notifyDataSetChanged();
     }
 
     private void addLinkCard() {
         linklist.add(new LinkCard(linkname, linkurl));
-        if (linklist.get(0).getName().equals("Name Example")){
+        // if fist data is example data, delete the first data.
+        if (linklist.get(0).getName().equals("Name Example")) {
             linklist.remove(0);
         }
         rviewAdapter.notifyDataSetChanged();
@@ -143,7 +181,4 @@ public class RecyclerViewActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 }

@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -45,9 +43,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.button_about_me:
-                    Toast.makeText(MainActivity.this,
-                            "Mana Yu Zou: zou.yu1@northeastern.edu",
-                            Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(MainActivity.this, AboutMeInfo.class);
+                    startActivity(intent);
                     break;
                 case R.id.button_a:
                     TextView textPressedA = findViewById(R.id.textView_buttonpressed);
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     textPressedF.setText("Pressed: F ");
                     break;
                 case R.id.button_link:
-                    Intent intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
+                    intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
                     startActivity(intent);
             }
         }
