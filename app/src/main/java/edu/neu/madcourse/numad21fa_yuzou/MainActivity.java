@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         Button buttonE = findViewById(R.id.button_e);
         Button buttonF = findViewById(R.id.button_f);
         Button buttonLink = findViewById(R.id.button_link);
+        Button buttonLoc = findViewById(R.id.btn_location);
         TextView textButtonPressed = findViewById(R.id.textView_buttonpressed);
         textButtonPressed.setText("Pressed: - ");
         textButtonPressed.setGravity(Gravity.CENTER);
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         buttonE.setOnClickListener(new MyButtoListener());
         buttonF.setOnClickListener(new MyButtoListener());
         buttonLink.setOnClickListener(new MyButtoListener());
-
+        buttonLoc.setOnClickListener((new MyButtoListener()));
     }
 
     class MyButtoListener implements View.OnClickListener{
@@ -77,8 +78,15 @@ public class MainActivity extends AppCompatActivity {
                     textPressedF.setText("Pressed: F ");
                     break;
                 case R.id.button_link:
-                    intent = new Intent(MainActivity.this, RecyclerViewActivity.class);
+                    intent = new Intent(MainActivity.this,
+                            RecyclerViewActivity.class);
                     startActivity(intent);
+                    break;
+                case R.id.btn_location:
+                    intent = new Intent(MainActivity.this,
+                            DisplayLocationActivity.class);
+                    startActivity(intent);
+                    break;
             }
         }
     }

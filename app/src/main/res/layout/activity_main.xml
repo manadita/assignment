@@ -8,11 +8,17 @@
 
     <Button
         android:id="@+id/button_about_me"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:text="@string/about_me"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
+        android:text="About                    Me"
+        android:textColor="#FFEB3B"
+        android:textSize="10sp"
+        android:textStyle="italic"
+        app:cornerRadius="360dip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -23,6 +29,7 @@
         android:layout_marginTop="16dp"
         android:text="Hello World!"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -119,22 +126,32 @@
 
     <Button
         android:id="@+id/button_link"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="42dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="76dp"
-        android:background="@color/purple_200"
-        android:fontFamily="sans-serif-condensed"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
         android:text="Link Collector"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.266"
-        app:layout_constraintStart_toEndOf="@+id/button_about_me"
+        android:textColor="#FFEB3B"
+        android:textSize="10sp"
+        android:textStyle="italic"
+        app:cornerRadius="360dip"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_location"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Get Location"
+        android:textColor="#FFEB3B"
+        android:textSize="10sp"
+        android:textStyle="italic"
+        app:cornerRadius="360dip"
+        app:layout_constraintEnd_toStartOf="@+id/button_about_me"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_link"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
