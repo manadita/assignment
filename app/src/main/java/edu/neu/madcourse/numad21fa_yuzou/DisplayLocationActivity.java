@@ -36,16 +36,17 @@ public class DisplayLocationActivity extends AppCompatActivity {
 
         } else {
             // already permission granted
+            flpc.getLastLocation().addOnSuccessListener(this,location -> {
+                if (location != null) {
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    txtlatitude.setText(String.valueOf(latitude));
+                    txtlongitude.setText(String.valueOf(longitude));
+                }
+            });
         }
 
-        flpc.getLastLocation().addOnSuccessListener(this,location -> {
-            if (location != null) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                txtlatitude.setText(String.valueOf(latitude));
-                txtlongitude.setText(String.valueOf(longitude));
-            }
-        });
+
 
     }
 
