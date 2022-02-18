@@ -36,10 +36,10 @@ public class DisplayLocationActivity extends AppCompatActivity {
         //latitude = 0;
         //longitude = 0;
         flpc = LocationServices.getFusedLocationProviderClient(this);
+        initialLocation();
         createLocationRequest();
         getCurrentLocation();
-        txtlatitude.setText(String.valueOf(latitude));
-        txtlongitude.setText(String.valueOf(longitude));
+
     }
 
     @Override
@@ -63,6 +63,12 @@ public class DisplayLocationActivity extends AppCompatActivity {
         flpc.removeLocationUpdates(locationCallback);
     }
 
+    private void initialLocation() {
+        latitude = 0;
+        longitude = 0;
+        txtlatitude.setText(String.valueOf(latitude));
+        txtlongitude.setText(String.valueOf(longitude));
+    }
 
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
@@ -87,20 +93,19 @@ public class DisplayLocationActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
-                    return;
+                    Toast.makeText(
+                            DisplayLocationActivity.this,
+                            "No location found. Check location access permission " +
+                                    "or GPS connection.",
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
-                    }
-                    else{
-                        Toast.makeText(
-                                DisplayLocationActivity.this,
-                                "No location found. Check location access permission " +
-                                        "or GPS connection.",
-                                Toast.LENGTH_LONG
-                        ).show();
+                        txtlatitude.setText(String.valueOf(latitude));
+                        txtlongitude.setText(String.valueOf(longitude));
                     }
                 }
             }
