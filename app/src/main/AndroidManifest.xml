@@ -23,6 +23,10 @@
             android:name="com.google.android.actions"
             android:resource="@layout/create_link_dialog" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR API KEY"/>
+
         <activity
             android:name=".RecyclerViewActivity"
             android:exported="false" />
