@@ -33,8 +33,6 @@ public class DisplayLocationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_location);
         txtlatitude = findViewById(R.id.txt_latitudenum);
         txtlongitude = findViewById(R.id.txt_longitudenum);
-        //latitude = 0;
-        //longitude = 0;
         flpc = LocationServices.getFusedLocationProviderClient(this);
         initialLocation();
         createLocationRequest();
@@ -64,8 +62,6 @@ public class DisplayLocationActivity extends AppCompatActivity {
     }
 
     private void initialLocation() {
-        latitude = 0;
-        longitude = 0;
         txtlatitude.setText(String.valueOf(latitude));
         txtlongitude.setText(String.valueOf(longitude));
     }

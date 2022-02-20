@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.neu.madcourse.numad21fa_yuzou">
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD21Fa_YuZou">
         <activity
+            android:name=".ClickyClickyActivity"
+            android:exported="false" />
+        <activity
             android:name=".DisplayLocationActivity"
             android:exported="false" />
         <activity
@@ -22,10 +26,9 @@
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@layout/create_link_dialog" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR API KEY"/>
+            android:value="YOUR API KEY" />
 
         <activity
             android:name=".RecyclerViewActivity"
