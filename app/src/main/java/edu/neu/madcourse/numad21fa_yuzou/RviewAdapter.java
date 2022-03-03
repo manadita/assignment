@@ -1,21 +1,18 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 public class RviewAdapter extends RecyclerView.Adapter<RviewHolder>{
-    private final List<ILinkCard> linklist;
+    private final List<ILinkCard> linkList;
 
     public RviewAdapter(List<ILinkCard> linklist) {
-        this.linklist = linklist;
+        this.linkList = linklist;
     }
 
     // inflate the row layout from layout
@@ -29,14 +26,13 @@ public class RviewAdapter extends RecyclerView.Adapter<RviewHolder>{
     // bind data to the TextView in each row.
     @Override
     public void onBindViewHolder(RviewHolder holder, int position) {
-        ILinkCard card = (LinkCard) linklist.get(position);
-        //holder.linkID.setText(position);
+        ILinkCard card = (LinkCard) linkList.get(position);
         holder.linkName.setText(card.getName());
         holder.linkURL.setText(card.getURL());
     }
 
     @Override
     public int getItemCount() {
-        return linklist.size();
+        return linkList.size();
     }
 }

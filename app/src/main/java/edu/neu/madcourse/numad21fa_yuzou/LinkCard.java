@@ -1,8 +1,8 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
 public class LinkCard implements ILinkCard{
-    private String linkname;
-    private String linkulr;
+    private String linkName;
+    private String linkURL;
 
     /**
      * Constructor for a link card.
@@ -11,36 +11,36 @@ public class LinkCard implements ILinkCard{
      */
     public LinkCard(String name, String url){
         if (name != null && url != null){
-            this.linkname = name;
-            this.linkulr = url;
+            this.linkName = name;
+            this.linkURL = url;
         }
         else {
             if (name == null) {
-                this.linkname = "N/A";
+                this.linkName = "N/A";
             }
             if (url == null) {
-                this.linkulr = "N/A";
+                this.linkURL = "N/A";
             }
         }
     }
 
     @Override
     public String getName() {
-        return this.linkname;
+        return this.linkName;
     }
 
     @Override
     public String getURL() {
-        return this.linkulr;
+        return this.linkURL;
     }
 
     @Override
     public void saveName(String name) {
-        this.linkname = name;
+        this.linkName = name;
     }
 
     @Override
     public void saveURL(String url) {
-        this.linkulr = url;
+        this.linkURL = url;
     }
 }

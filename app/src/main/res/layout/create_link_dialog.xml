@@ -12,7 +12,7 @@
         android:layout_weight="1" />
 
     <TextView
-        android:id="@+id/text_infoname"
+        android:id="@+id/txt_linkName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -22,7 +22,7 @@
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editText_name"
+        android:id="@+id/editText_linkName"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -32,7 +32,7 @@
         android:minHeight="48dp" />
 
     <TextView
-        android:id="@+id/text_infourl"
+        android:id="@+id/txt_linkURL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -44,7 +44,7 @@
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editText_url"
+        android:id="@+id/editText_linkURL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"

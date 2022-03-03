@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,9 +15,8 @@ public class RviewHolder extends RecyclerView.ViewHolder{
 
     public RviewHolder(View itemView) {
         super(itemView);
-        //linkID = itemView.findViewById(R.id.link_id);
-        linkName = itemView.findViewById(R.id.link_name);
-        linkURL = itemView.findViewById(R.id.link_url);
+        linkName = itemView.findViewById(R.id.txt_LinkCard_name);
+        linkURL = itemView.findViewById(R.id.txt_LinkCard_url);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

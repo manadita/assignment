@@ -19,8 +19,8 @@ import com.google.android.gms.location.LocationServices;
 
 
 public class DisplayLocationActivity extends AppCompatActivity {
-    private TextView txtlatitude;
-    private TextView txtlongitude;
+    private TextView txtLatitude;
+    private TextView txtLongitude;
     private double latitude;
     private double longitude;
     private FusedLocationProviderClient flpc;
@@ -31,8 +31,8 @@ public class DisplayLocationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_location);
-        txtlatitude = findViewById(R.id.txt_latitudenum);
-        txtlongitude = findViewById(R.id.txt_longitudenum);
+        txtLatitude = findViewById(R.id.txt_latitudenum);
+        txtLongitude = findViewById(R.id.txt_longitudenum);
         flpc = LocationServices.getFusedLocationProviderClient(this);
         initialLocation();
         createLocationRequest();
@@ -49,6 +49,7 @@ public class DisplayLocationActivity extends AppCompatActivity {
                 && ActivityCompat.checkSelfPermission(
                         this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
+            // access was granted when activity created.
         }
         flpc.requestLocationUpdates(locationRequest,
                 locationCallback,
@@ -62,19 +63,20 @@ public class DisplayLocationActivity extends AppCompatActivity {
     }
 
     private void initialLocation() {
-        txtlatitude.setText(String.valueOf(latitude));
-        txtlongitude.setText(String.valueOf(longitude));
+        txtLatitude.setText(String.valueOf(latitude));
+        txtLongitude.setText(String.valueOf(longitude));
     }
 
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(10000); //间隔10s
-        locationRequest.setFastestInterval(5000); //可以处理的最快间隔
+        locationRequest.setInterval(10000); // every 10s.
+        locationRequest.setFastestInterval(5000); // every 5s.
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
 
     private void getCurrentLocation() {
+        // check if app has permission to access location.
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this,
@@ -85,6 +87,7 @@ public class DisplayLocationActivity extends AppCompatActivity {
                             Manifest.permission.ACCESS_COARSE_LOCATION},0);
 
         }
+        // request for current location updates.
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -100,8 +103,8 @@ public class DisplayLocationActivity extends AppCompatActivity {
                     if (location != null) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
-                        txtlatitude.setText(String.valueOf(latitude));
-                        txtlongitude.setText(String.valueOf(longitude));
+                        txtLatitude.setText(String.valueOf(latitude));
+                        txtLongitude.setText(String.valueOf(longitude));
                     }
                 }
             }
