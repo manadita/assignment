@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.btn_webserver:
-                    intent = new Intent(MainActivity.this, WebServerActivity.class);
+                    intent = new Intent(MainActivity.this, WebServiceActivity.class);
                     startActivity(intent);
                     break;
             }
