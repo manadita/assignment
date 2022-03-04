@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD21Fa_YuZou">
         <activity
-            android:name=".WebServerActivity"
+            android:name=".WebServiceActivity"
             android:exported="false" />
         <activity
             android:name=".ClickyClickyActivity"

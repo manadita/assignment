@@ -2,12 +2,29 @@ package edu.neu.madcourse.numad21fa_yuzou;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WebServiceActivity extends AppCompatActivity {
     private static final String apikey = "046f38d91a8fb45bbbcbb710696b2b43";
@@ -15,10 +32,12 @@ public class WebServiceActivity extends AppCompatActivity {
     private RadioButton rdbMovie;
     private RadioButton rdbPeople;
     private TextView txtResult;
+    private EditText edtInput;
     private String searchTxt;
-    private String url;
+    private String urllink;
     private boolean searchMovie;
     private boolean searchPeople;
+    //private List<Movie> movieList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +46,12 @@ public class WebServiceActivity extends AppCompatActivity {
 
         searchMovie = false;
         searchPeople = false;
+        //movieList = new ArrayList<>();
 
         rdbMovie = findViewById(R.id.rdb_webservice_movie);
         rdbPeople = findViewById(R.id.rdb_webservice_people);
-        EditText edtInput = findViewById(R.id.et_movie_input);
-        searchTxt = edtInput.getText().toString();
+        edtInput = findViewById(R.id.et_movie_input);
+
         txtResult = findViewById(R.id.txt_movie_result);
         txtResult.setText("");
         Button btnSearch = findViewById(R.id.btn_movie_search);
@@ -44,51 +64,63 @@ public class WebServiceActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            checkSearch();
-            if (searchMovie && searchPeople){
-                // TODO alert msg : can't search both
-            }
-            else if (!searchMovie && !searchPeople){
-                // TODO alear msg : must select one
-            }
-            else {
-                // TODO search database and get result
-                editSearchUrl();
-                getResult();
-                appendResponse();
-            }
+            editSearchUrl();
+            String info = getData();
+            txtResult.setText(info);
+
         }
     }
-
-    private void getResult() {
-        // TODO get data from database using url.
-    }
-
-
-    private void checkSearch() {
-        //Check if search preference is selected.
-        if (rdbMovie.isChecked()){
-            searchMovie = true;
-        }
-        if (rdbPeople.isChecked()){
-            searchPeople = true;
-        }
-    }
-
 
     private void editSearchUrl() {
-        if (searchTxt.isEmpty() || searchTxt == null){
-            // TODO aleart msg: input title or name for search.
+        searchTxt = edtInput.getText().toString();
+        //urllink = "https://api.themoviedb.org/3/search/movie?api_key="
+        //        +apikey+"&query="+"alien";
+        urllink = "https://api.themoviedb.org/3/search/movie?api_key=046f38d91a8fb45bbbcbb710696b2b43&query=ALIEN";
+        //urllink = "https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata";
+;    }
+
+
+    private String getData(){
+        StringBuffer movieInfo = new StringBuffer();
+        //movieInfo.append("get data");
+
+        try {
+
+            // Initial website is "https://jsonplaceholder.typicode.com/posts/1"
+            URL url = new URL(urllink);
+            // Get String response from the url address
+            String resp = WebServiceUtil.httpResponse(url);
+
+            //JSONObject jsonObject = new JSONObject(resp);
+            //movieInfo.append(jsonObject.getString("strMeal"));
+            movieInfo.append("get data");
+
+
+        } catch (MalformedURLException e) {
+            movieInfo.append("MalformedURLException: ");
+            movieInfo.append(e.toString());
+            Log.e(TAG,"MalformedURLException");
+            e.printStackTrace();
+        //}
+        //catch (ProtocolException e) {
+        //    movieInfo.append("ProtocolException");
+        //    Log.e(TAG,"ProtocolException");
+        //e.printStackTrace();
+        } catch (IOException e) {
+            movieInfo.append("IOException: ");
+            movieInfo.append(e.toString());
+            Log.e(TAG,"IOException");
+            e.printStackTrace();
+        //} catch (JSONException e) {
+        //    movieInfo.append("JSONException");
+        //    Log.e(TAG,"JSONException");
+            //   e.printStackTrace();
         }
-        else {
-            if (searchMovie){
-                url = "https://api.themoviedb.org/3/search/movie?api_key="
-                        +apikey+"&query="+searchTxt;
-            }
-            if (searchPeople){
-                url = ""+"";
-            }
-        }
+
+        return movieInfo.toString();
     }
+
+
+
 
 }
