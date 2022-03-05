@@ -7,7 +7,7 @@
     app:cardCornerRadius="2dp">
 
         <TextView
-            android:id="@+id/txt_LinkCard_name"
+            android:id="@+id/txt_movieinfo_original_title"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -18,7 +18,7 @@
             android:textSize="12sp"/>
 
         <TextView
-            android:id="@+id/txt_LinkCard_url"
+            android:id="@+id/txt_movieinfo_release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
