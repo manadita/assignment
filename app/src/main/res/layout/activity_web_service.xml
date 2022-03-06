@@ -6,30 +6,30 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/et_movie_input"
+        android:id="@+id/et_meal_search_input"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
         android:ems="10"
-        android:hint="Enter title or name to serach"
+        android:hint="Enter keyword to serach"
         android:inputType="text"
         android:minHeight="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btn_movie_search"
+        android:id="@+id/btn_meal_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:text="Search"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_movie_input" />
+        app:layout_constraintTop_toBottomOf="@+id/et_meal_search_input" />
 
     <TextView
-        android:id="@+id/txt_movie_result"
+        android:id="@+id/txt_meal_result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -37,10 +37,10 @@
         android:text="TextView"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_movie_search" />
+        app:layout_constraintTop_toBottomOf="@id/btn_meal_search" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_movie"
+        android:id="@+id/recyclerview_meal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
@@ -50,11 +50,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_movie_result"
+        app:layout_constraintTop_toBottomOf="@+id/txt_meal_result"
         app:layout_constraintVertical_bias="0.068" />
 
     <ProgressBar
-        android:id="@+id/pb_moviesearch"
+        android:id="@+id/pb_mealsearch"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

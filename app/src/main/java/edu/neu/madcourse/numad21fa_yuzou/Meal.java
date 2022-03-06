@@ -6,6 +6,7 @@ public class Meal {
     private final String category;
     private final String area;
     private final String instruction;
+    private final String imagepath;
 
 
     /**
@@ -16,12 +17,13 @@ public class Meal {
      * @param area          the area of the meal cuisine.
      * @param instruction   the instruction of how to cook this meal.
      */
-    public Meal(String id, String meal, String category, String area, String instruction) {
+    public Meal(String id, String meal, String category, String area, String instruction, String path) {
         this.id = id;
         this.meal = meal;
         this.category = "Category: " + category;
         this.area = "Cuisine: " + area;
         this.instruction = instruction;
+        this.imagepath = path;
     }
 
     public String getId(){
@@ -43,5 +45,7 @@ public class Meal {
     public String getInstruction(){
         return this.instruction;
     }
+
+    public String getImagepath() { return this.imagepath; }
 
 }

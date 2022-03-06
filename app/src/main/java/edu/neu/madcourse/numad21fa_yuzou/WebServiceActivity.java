@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +42,8 @@ public class WebServiceActivity extends AppCompatActivity {
     private List<Meal> mealList;
     private TextView txtResult;
     private EditText edtInput;
-
+    private ProgressBar progressBar;
+    private Handler myHandler;
 
 
     @Override
@@ -52,29 +53,37 @@ public class WebServiceActivity extends AppCompatActivity {
 
         mealList = new ArrayList<>();
 
-        edtInput = findViewById(R.id.et_movie_input);
+        edtInput = findViewById(R.id.et_meal_search_input);
 
-        txtResult = findViewById(R.id.txt_movie_result);
+        txtResult = findViewById(R.id.txt_meal_result);
         txtResult.setText("");
-        ProgressBar pbSearch = findViewById(R.id.pb_moviesearch);
-        Button btnSearch = findViewById(R.id.btn_movie_search);
+        ProgressBar pbSearch = findViewById(R.id.pb_mealsearch);
+        Button btnSearch = findViewById(R.id.btn_meal_search);
         btnSearch.setOnClickListener(new MyClickListener());
+
+        progressBar = findViewById(R.id.pb_mealsearch);
+        progressBar.setVisibility(View.GONE);
+
     }
 
 
+    /**
+     * Click search button to search keyword in mealDB.
+     */
     private class MyClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
 
+            myHandler = new MyHandler();
             // get user input as search keyword.
             editSearchUrl();
 
             // alert user if nothing typed in the search text area.
             if (urllink == null){
-                AlertDialog.Builder aleart_nullInput = new AlertDialog.Builder(
+                AlertDialog.Builder alert_nullInput = new AlertDialog.Builder(
                         (WebServiceActivity.this));
-                aleart_nullInput.setTitle("Invalid Input").setMessage("Enter search content.")
+                alert_nullInput.setTitle("Invalid Input").setMessage("Enter search keyword.")
                         .setCancelable(true)
                         .setNegativeButton("Cancel",
                                 new DialogInterface.OnClickListener() {
@@ -90,21 +99,28 @@ public class WebServiceActivity extends AppCompatActivity {
                                         dialogInterface.cancel();
                                     }
                                 });
-                aleart_nullInput.show();
+                alert_nullInput.show();
             }
             // search the database using keyword.
             else {
+
                 Thread searchThread = new Thread(new WebSearch());
                 searchThread.start();
+
+                // display result
                 if (mealList.size() == 0){
                     txtResult.setText("0 meal found.");
                 }
                 else {
-                    txtResult.setText(String.format("%d meals found.", mealList.size()));
-                    // list result.
                     creatRecyclerView();
+                    txtResult.setText(String.format("%d meals found. Click a meal to see details.",
+                            mealList.size()));
                 }
             }
+            progressBar.setVisibility(View.GONE);
+            Message message = new Message();
+            message.what = 2;
+            myHandler.sendMessage(message);
 
         }
     }
@@ -126,9 +142,12 @@ public class WebServiceActivity extends AppCompatActivity {
         @Override
         public void run() {
 
+            Message message = new Message();
+            message.what = 1;
+            myHandler.sendMessage(message);
+
             JSONArray jArray = new JSONArray();
             JSONObject jObject = new JSONObject();
-
 
             try {
 
@@ -157,18 +176,14 @@ public class WebServiceActivity extends AppCompatActivity {
                 jArray = jObject.getJSONArray("meals");
 
             } catch (MalformedURLException e) {
-                Log.e(TAG, "***** Create URL err: " + e.toString());
                 e.printStackTrace();
             } catch (ProtocolException e) {
-                Log.e(TAG, "***** OPEN URL err: " + e.toString());
                 e.printStackTrace();
             } catch (IOException e) {
-                Log.e(TAG, "***** OPEN URL err: " + e.toString());
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.i(TAG, String.valueOf(jArray.length()));
 
             mealList = new ArrayList<>();
             // loop through all meals
@@ -180,28 +195,20 @@ public class WebServiceActivity extends AppCompatActivity {
                     String category = jmeal.getString("strCategory");
                     String area = jmeal.getString("strArea");
                     String instruction = jmeal.getString("strInstructions");
-                    Meal meal = new Meal(id, name, category, area, instruction);
+                    String path = jmeal.getString("strMealThumb");
+                    Meal meal = new Meal(id, name, category, area, instruction, path);
                     mealList.add(meal);
-                }
-                Log.d(TAG, "***** Convert meals");
-
-                for (int i = 0; i < mealList.size(); i ++){
-                    String ee = mealList.get(i).getMeal();
-                    Log.i(TAG, ee);
                 }
 
             } catch (JSONException e) {
-                Log.i(TAG,"get movie details"+e.toString());
                 e.printStackTrace();
             }
-
-
         }
     }
 
 
     private void creatRecyclerView() {
-        RecyclerView mealView = findViewById(R.id.recyclerview_movie);
+        RecyclerView mealView = findViewById(R.id.recyclerview_meal);
         MviewAdapter mealAdapter = new MviewAdapter(mealList);
         mealView.setLayoutManager(new LinearLayoutManager(this));
         mealView.setItemAnimator(new DefaultItemAnimator());
@@ -232,6 +239,7 @@ public class WebServiceActivity extends AppCompatActivity {
             holder.area.setText(card.getArea());
             holder.id = card.getId();
             holder.instruction = card.getInstruction();
+            holder.imagepath = card.getImagepath();
         }
 
         @Override
@@ -246,6 +254,7 @@ public class WebServiceActivity extends AppCompatActivity {
         private TextView area;
         private String id;
         private String instruction;
+        private String imagepath;
 
         public MviewHolder(@NonNull View itemView) {
             super(itemView);
@@ -260,10 +269,23 @@ public class WebServiceActivity extends AppCompatActivity {
                             mealName.getText().toString(), category.getText().toString(),
                             area.getText().toString());
                     intent.putExtra("meal", mealDetail);
+                    intent.putExtra("path", imagepath);
                     intent.putExtra("instruction", instruction);
                     startActivity(intent);
                 }
             });
+        }
+    }
+
+    private class MyHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg){
+            if (msg.what == 1) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            else {
+                progressBar.setVisibility(View.GONE);
+            }
         }
     }
 
