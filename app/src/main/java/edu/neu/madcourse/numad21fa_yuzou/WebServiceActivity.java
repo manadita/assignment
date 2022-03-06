@@ -1,21 +1,25 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.AsyncTask;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,40 +37,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WebServiceActivity extends AppCompatActivity {
-    private static final String apikey = "046f38d91a8fb45bbbcbb710696b2b43";
     private static final String TAG = "Web Service Activity";
-    private RadioButton rdbMovie;
-    private RadioButton rdbPeople;
+    private String urllink;
+    private List<Meal> mealList;
     private TextView txtResult;
     private EditText edtInput;
-    private String searchTxt;
-    private String urllink;
-    private boolean searchMovie;
-    private boolean searchPeople;
-    private List<Movie> movieList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_service);
 
-        searchMovie = false;
-        searchPeople = false;
-        movieList = new ArrayList<>();
+        mealList = new ArrayList<>();
 
-
-        //rdbMovie = findViewById(R.id.rdb_webservice_movie);
-        //rdbPeople = findViewById(R.id.rdb_webservice_people);
         edtInput = findViewById(R.id.et_movie_input);
 
         txtResult = findViewById(R.id.txt_movie_result);
         txtResult.setText("");
+        ProgressBar pbSearch = findViewById(R.id.pb_moviesearch);
         Button btnSearch = findViewById(R.id.btn_movie_search);
         btnSearch.setOnClickListener(new MyClickListener());
-
-        getTestData();
-        creatRecyclerView();
-
     }
 
 
@@ -74,119 +66,153 @@ public class WebServiceActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+
+            // get user input as search keyword.
             editSearchUrl();
-            WebServiceTask task = new WebServiceTask();
-            task.execute(urllink);
+
+            // alert user if nothing typed in the search text area.
+            if (urllink == null){
+                AlertDialog.Builder aleart_nullInput = new AlertDialog.Builder(
+                        (WebServiceActivity.this));
+                aleart_nullInput.setTitle("Invalid Input").setMessage("Enter search content.")
+                        .setCancelable(true)
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                })
+                        .setPositiveButton("Re-Enter",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                aleart_nullInput.show();
+            }
+            // search the database using keyword.
+            else {
+                Thread searchThread = new Thread(new WebSearch());
+                searchThread.start();
+                if (mealList.size() == 0){
+                    txtResult.setText("0 meal found.");
+                }
+                else {
+                    txtResult.setText(String.format("%d meals found.", mealList.size()));
+                    // list result.
+                    creatRecyclerView();
+                }
+            }
+
         }
     }
 
     private void editSearchUrl() {
-        searchTxt = edtInput.getText().toString();
-        //urllink = "https://api.themoviedb.org/3/search/movie?api_key="
-        //        +apikey+"&query="+"alien";
-        urllink = "https://api.themoviedb.org/3/search/movie?api_key=046f38d91a8fb45bbbcbb710696b2b43&query=Alien+Resurrection";
-        //urllink = "https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata";
+        String keyWord = edtInput.getText().toString();
+        if (TextUtils.isEmpty(keyWord)) {
+            urllink = null;
+        }
+        else {
+            urllink = "https://www.themealdb.com/api/json/v1/1/search.php?s=" + keyWord;
+        }
+
 ;    }
 
 
-    private class WebServiceTask extends AsyncTask<String, Integer, JSONArray>{
+    private class WebSearch implements Runnable {
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            Log.i(TAG, "Making progress...");
-        }
-
-        @Override
-        protected JSONArray doInBackground(String... param) {
+        public void run() {
 
             JSONArray jArray = new JSONArray();
             JSONObject jObject = new JSONObject();
 
-            try{
+
+            try {
+
                 URL url = new URL(urllink);
-                String resp;
+
                 // Get String response from the url address
+                String resp = null;
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setDoInput(true);
                 conn.connect();
+
                 // Read response.
                 InputStream inputStream = conn.getInputStream();
                 StringBuilder stringBuilder=new StringBuilder();
                 BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
-
-                String len = "";
+                String len = null;
                 while((len = bufferedReader.readLine()) != null){
                     stringBuilder.append(len);
                 }
                 bufferedReader.close();
                 resp = stringBuilder.toString();
-                Log.e(TAG, "Response from url: " + resp);
 
                 // handle result
-                // resp = testResp();
                 jObject = new JSONObject(resp);
-                jArray = jObject.getJSONArray("id");
+                jArray = jObject.getJSONArray("meals");
 
-
-            } catch (MalformedURLException mfURLe) {
-                Log.i(TAG,"MalformedURLException");
-                mfURLe.printStackTrace();
-            } catch (ProtocolException proe) {
-                Log.i(TAG, "ProtocolException");
-                proe.printStackTrace();
-            } catch (IOException ioe) {
-                Log.i(TAG, "IOException");
-                ioe.printStackTrace();
-            } catch (JSONException jsoe) {
-                Log.i(TAG,"JSONException");
-                txtResult.setText("JSONException");
-                jsoe.printStackTrace();
+            } catch (MalformedURLException e) {
+                Log.e(TAG, "***** Create URL err: " + e.toString());
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                Log.e(TAG, "***** OPEN URL err: " + e.toString());
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e(TAG, "***** OPEN URL err: " + e.toString());
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            Log.i(TAG, String.valueOf(jArray.length()));
 
-            return jArray;
-        }
+            mealList = new ArrayList<>();
+            // loop through all meals
+            try {
+                for (int i = 0; i < jArray.length(); i++) {
+                    JSONObject jmeal = jArray.getJSONObject(i);
+                    String id = jmeal.getString("idMeal");
+                    String name = jmeal.getString("strMeal");
+                    String category = jmeal.getString("strCategory");
+                    String area = jmeal.getString("strArea");
+                    String instruction = jmeal.getString("strInstructions");
+                    Meal meal = new Meal(id, name, category, area, instruction);
+                    mealList.add(meal);
+                }
+                Log.d(TAG, "***** Convert meals");
 
-        @Override
-        protected void onPostExecute(JSONArray jArray) {
-            super.onPostExecute(jArray);
-            //TextView result_view = (TextView)findViewById(R.id.result_textview);
-            if (jArray == null){
-                txtResult.setText("Movie not found.");
-            }
-            else {
-                // loop through all movies
-                try {
-                    for (int i = 0; i < jArray.length(); i ++){
-                        JSONObject jmovie = jArray.getJSONObject(i);
-                        String title = jmovie.getString("original_title");
-                        String releasedata = jmovie.getString("release_date");
-                        String rating = jmovie.getString("vote_average");
-                        Movie movie = new Movie(title, releasedata, rating);
-                        movieList.add(movie);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                for (int i = 0; i < mealList.size(); i ++){
+                    String ee = mealList.get(i).getMeal();
+                    Log.i(TAG, ee);
                 }
 
+            } catch (JSONException e) {
+                Log.i(TAG,"get movie details"+e.toString());
+                e.printStackTrace();
             }
+
 
         }
     }
 
+
     private void creatRecyclerView() {
-        RecyclerView movieView = findViewById(R.id.recyclerview_movie);
-        MviewAdapter movieAdapter = new MviewAdapter(movieList);
-        movieView.setLayoutManager(new LinearLayoutManager(this));
-        movieView.setItemAnimator(new DefaultItemAnimator());
-        movieView.setAdapter(movieAdapter);
+        RecyclerView mealView = findViewById(R.id.recyclerview_movie);
+        MviewAdapter mealAdapter = new MviewAdapter(mealList);
+        mealView.setLayoutManager(new LinearLayoutManager(this));
+        mealView.setItemAnimator(new DefaultItemAnimator());
+        mealView.setAdapter(mealAdapter);
 
     }
 
     private class MviewAdapter extends RecyclerView.Adapter<MviewHolder>{
-        private final List<Movie> list;
+        private final List<Meal> list;
 
-        public MviewAdapter(List<Movie> list) {
+        public MviewAdapter(List<Meal> list) {
             this.list = list;
         }
 
@@ -194,17 +220,18 @@ public class WebServiceActivity extends AppCompatActivity {
         @Override
         public MviewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.move_info_card, parent,false);
+                    R.layout.meal_card, parent,false);
             return new MviewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull MviewHolder holder, int position) {
-            Movie card = (Movie) list.get(position);
-            holder.movieTitle.setText(card.getTitle());
-            holder.movieReleaseDate.setText(card.getReleaseDte());
-            holder.movieRating.setText(card.getRating());
-
+            Meal card = (Meal) list.get(position);
+            holder.mealName.setText(card.getMeal());
+            holder.category.setText(card.getCategory());
+            holder.area.setText(card.getArea());
+            holder.id = card.getId();
+            holder.instruction = card.getInstruction();
         }
 
         @Override
@@ -214,52 +241,33 @@ public class WebServiceActivity extends AppCompatActivity {
     }
 
     private class MviewHolder extends RecyclerView.ViewHolder{
-        private TextView movieTitle;
-        private TextView movieReleaseDate;
-        private TextView movieRating;
+        private TextView mealName;
+        private TextView category;
+        private TextView area;
+        private String id;
+        private String instruction;
 
         public MviewHolder(@NonNull View itemView) {
             super(itemView);
-            movieTitle = itemView.findViewById(R.id.txt_movieinfo_original_title);
-            movieReleaseDate = itemView.findViewById(R.id.txt_movieinfo_release_date);
-            movieRating = itemView.findViewById(R.id.txt_movieinfo_vote_average);
-
-
+            mealName = itemView.findViewById(R.id.txt_mealinfo_meal);
+            category = itemView.findViewById(R.id.txt_mealinfo_category);
+            area = itemView.findViewById(R.id.txt_mealinfo_area);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(WebServiceActivity.this, MealDetailActivity.class);
+                    String mealDetail = String.format("Meal: %s\n\n%s\n\n%s\n\n\n",
+                            mealName.getText().toString(), category.getText().toString(),
+                            area.getText().toString());
+                    intent.putExtra("meal", mealDetail);
+                    intent.putExtra("instruction", instruction);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
 
-    private String testResp() {
-        return "{" +
-                "\"page\":1," +
-                "\"results\":[" +
-                "{\"adult\":false," +
-                "\"backdrop_path\":\"/ikr0UILfvRerzMNoBTtJtyuWAEV.jpg\"," +
-                "\"genre_ids\":[878,27,28]," +
-                "\"id\":8078," +
-                "\"original_language\":\"en\"," +
-                "\"original_title\":\"Alien Resurrection\"," +
-                "\"overview\":\"Two hundred years after Lt. Ripley died, " +
-                "a group of scientists clone her, hoping to breed the ultimate weapon. " +
-                "But the new Ripley is full of surprises … as are the new aliens. " +
-                "Ripley must team with a band of smugglers to keep the creatures from reaching Earth.\"," +
-                "\"popularity\":30.553," +
-                "\"poster_path\":\"/9aRDMlU5Zwpysilm0WCWzU2PCFv.jpg\"," +
-                "\"release_date\":\"1997-11-12\"," +
-                "\"title\":\"Alien Resurrection\"," +
-                "\"video\":false," +
-                "\"vote_average\":6.1," +
-                "\"vote_count\":3740}," +
-                "]," +
-                "\"total_pages\":1," +
-                "\"total_results\":1}";
-    }
-
-    private void getTestData(){
-        movieList.add(new Movie("Movie 01", "2022-3-15", "6.0"));
-        movieList.add(new Movie("Movie 02", "2019-7-06", "8.2"));
-        movieList.add(new Movie("Movie 03", "1981-11-25", "7.5"));
-    }
 
 
 }

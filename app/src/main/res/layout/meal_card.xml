@@ -8,40 +8,40 @@
     app:cardCornerRadius="2dp">
 
         <TextView
-            android:id="@+id/txt_movieinfo_original_title"
-            android:layout_width="150dp"
+            android:id="@+id/txt_mealinfo_meal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:lineSpacingExtra="20sp"
-            android:text="original title"
+            android:text="Meal"
             android:textAlignment="viewStart"
             android:textColor="@color/purple_700"
             android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txt_movieinfo_release_date"
-            android:layout_width="80dp"
+            android:id="@+id/txt_mealinfo_category"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:text="release date"
+            android:text="Meal Category"
             android:textColor="@android:color/black"
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/txt_movieinfo_vote_average"
-            android:layout_width="wrap_content"
+            android:id="@+id/txt_mealinfo_area"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_weight="1"
-            android:text="vote average"
-            android:textColor="#F44336"
+            android:text="Cusine"
+            android:textColor="#4CAF50"
             android:textSize="12sp" />
 
 </LinearLayout>

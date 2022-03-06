@@ -15,8 +15,8 @@ public class RviewHolder extends RecyclerView.ViewHolder{
 
     public RviewHolder(View itemView) {
         super(itemView);
-        linkName = itemView.findViewById(R.id.txt_movieinfo_original_title);
-        linkURL = itemView.findViewById(R.id.txt_movieinfo_release_date);
+        linkName = itemView.findViewById(R.id.txt_mealinfo_meal);
+        linkURL = itemView.findViewById(R.id.txt_mealinfo_category);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
