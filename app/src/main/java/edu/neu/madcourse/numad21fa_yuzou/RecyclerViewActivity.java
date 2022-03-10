@@ -67,8 +67,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
         createLinkDialog.setPositiveButton("Add Link", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                EditText et_name = (EditText) dialogView.findViewById(R.id.editText_linkName);
-                EditText et_url = (EditText) dialogView.findViewById(R.id.editText_linkURL);
+                EditText et_name = dialogView.findViewById(R.id.editText_linkName);
+                EditText et_url = dialogView.findViewById(R.id.editText_linkURL);
                 linkName = et_name.getText().toString();
                 linkURL = et_url.getText().toString();
 

@@ -1,14 +1,10 @@
 package edu.neu.madcourse.numad21fa_yuzou;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +15,12 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,11 +43,12 @@ public class WebServiceActivity extends AppCompatActivity {
     private List<Meal> mealList;
     private TextView txtResult;
     private EditText edtInput;
-    private MviewAdapter mealAdapter;
+    private RecyclerView.Adapter mealAdapter;
     private ProgressBar progressBar;
     private RadioGroup rp_searchType;
     private boolean searchMeal;
     private boolean searchCuisine;
+    private Handler myHandler;
 
 
     @Override
@@ -57,15 +60,20 @@ public class WebServiceActivity extends AppCompatActivity {
         searchMeal = false;
         searchCuisine = false;
 
+        TextView txtHowToUse = findViewById(R.id.txt_meal_howtouse);
+        txtHowToUse.setText("Select Search by Meal or Search by Cuisine, " +
+                "input search keyword then click SEARCH. " +
+                "Click on a meal to see details.");
         edtInput = findViewById(R.id.et_meal_search_input);
         txtResult = findViewById(R.id.txt_meal_result);
         txtResult.setText("");
         progressBar = findViewById(R.id.pb_mealsearch);
         progressBar.setVisibility(View.GONE);
         rp_searchType = findViewById(R.id.rgoup_meal_searchgroup);
+        myHandler = new Handler();
+
         Button btnSearch = findViewById(R.id.btn_meal_search);
         btnSearch.setOnClickListener(new MyClickListener());
-
         // check radio button group status.
         rp_searchType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -84,6 +92,7 @@ public class WebServiceActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
 
@@ -95,10 +104,8 @@ public class WebServiceActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
-            progressBar.setVisibility(View.VISIBLE);
             // get user input as search keyword.
             editSearchUrl();
-
             // alert user if nothing typed in the search text area.
             if (urllink == null){
                 AlertDialog.Builder alert_nullInput = new AlertDialog.Builder(
@@ -125,7 +132,7 @@ public class WebServiceActivity extends AppCompatActivity {
             else if (!searchMeal && !searchCuisine){
                 AlertDialog.Builder alert_nullInput = new AlertDialog.Builder(
                         (WebServiceActivity.this));
-                alert_nullInput.setTitle("Invalid Input").setMessage("Select a search type.")
+                alert_nullInput.setTitle("Invalid Search Type").setMessage("Select a search type.")
                         .setCancelable(true)
                         .setNegativeButton("Cancel",
                                 new DialogInterface.OnClickListener() {
@@ -146,27 +153,10 @@ public class WebServiceActivity extends AppCompatActivity {
 
             // search the database using keyword.
             else {
-                Thread searchThread = new Thread(new WebSearch());
+                progressBar.setVisibility(View.VISIBLE);
+                Thread searchThread = new ThreadSearch();
                 searchThread.start();
-                // display result
-                if (mealList.size() == 0){
-                    txtResult.setText("0 meal found.");
-                }
-                else {
-                    // create recycler view to hold result.
-                    creatRecyclerView();
-                    if (searchMeal){
-                        txtResult.setText(String.format("%d meals found. Click a meal to see details.",
-                                mealList.size()));
-                    }
-                    if (searchCuisine){
-                        txtResult.setText(String.format("%d meals found. Search meal name for detail.",
-                                mealList.size()));
-                    }
-                }
-
             }
-
         }
     }
 
@@ -177,6 +167,7 @@ public class WebServiceActivity extends AppCompatActivity {
             urllink = null;
         }
         else {
+            urllink = "";
             if (searchMeal){
                 urllink = "https://www.themealdb.com/api/json/v1/1/search.php?s=" + keyWord;
             }
@@ -184,13 +175,10 @@ public class WebServiceActivity extends AppCompatActivity {
                 urllink = "https://www.themealdb.com/api/json/v1/1/filter.php?a=" + keyWord;
             }
         }
-
-;    }
-
+   }
 
 
-    private class WebSearch implements Runnable {
-
+    private class ThreadSearch extends Thread {
         @Override
         public void run() {
 
@@ -210,10 +198,10 @@ public class WebServiceActivity extends AppCompatActivity {
 
                 // Read response.
                 InputStream inputStream = conn.getInputStream();
-                StringBuilder stringBuilder=new StringBuilder();
-                BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder stringBuilder = new StringBuilder();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String len = null;
-                while((len = bufferedReader.readLine()) != null){
+                while ((len = bufferedReader.readLine()) != null) {
                     stringBuilder.append(len);
                 }
                 bufferedReader.close();
@@ -245,12 +233,11 @@ public class WebServiceActivity extends AppCompatActivity {
                     String category = "";
                     String area = "";
                     String instruction = "";
-                    if (searchMeal){
+                    if (searchMeal) {
                         category = jmeal.getString("strCategory");
                         area = jmeal.getString("strArea");
                         instruction = jmeal.getString("strInstructions");
-                    }
-                    else if (searchCuisine){
+                    } else if (searchCuisine) {
                         area = edtInput.getText().toString();
                     }
 
@@ -261,26 +248,47 @@ public class WebServiceActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            progressBar.setVisibility(View.INVISIBLE);
-        }
-    }
 
+            // display result.
+            myHandler.post(new Runnable() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void run () {
+                // progress end.
+                progressBar.setVisibility(View.INVISIBLE);
+
+                // check result and displays.
+                if (mealList.size() == 0) {
+                    txtResult.setText("0 meal found.");
+                } else {
+                    txtResult.setText(String.format("%d meals found. Click a meal to see details.",
+                                mealList.size()));
+                }
+                // create recycler view to hold result.
+                createRecyclerView();
+            }
+
+        });
+        }
+
+    }
 
     /**
      * Create recyclerview that holds the result.
      */
-    private void creatRecyclerView() {
+    private void createRecyclerView() {
         RecyclerView mealView = findViewById(R.id.recyclerview_meal);
-        mealAdapter = new MviewAdapter(mealList);
+        mealAdapter = new TestAdapter(mealList);
         mealView.setLayoutManager(new LinearLayoutManager(this));
         mealView.setItemAnimator(new DefaultItemAnimator());
         mealView.setAdapter(mealAdapter);
+
     }
 
-    private class MviewAdapter extends RecyclerView.Adapter<MviewHolder>{
+    private class TestAdapter extends RecyclerView.Adapter<MviewHolder>{
         private final List<Meal> list;
 
-        public MviewAdapter(List<Meal> list) {
+        public TestAdapter(List<Meal> list) {
             this.list = list;
         }
 
@@ -297,7 +305,6 @@ public class WebServiceActivity extends AppCompatActivity {
             holder.mealName.setText(card.getMeal());
             holder.category.setText(card.getCategory());
             holder.area.setText(card.getArea());
-            holder.instruction = card.getInstruction();
             holder.id = card.getId();
         }
 
@@ -311,7 +318,6 @@ public class WebServiceActivity extends AppCompatActivity {
         private TextView mealName;
         private TextView category;
         private TextView area;
-        private String instruction;
         private String id;
 
         public MviewHolder(View itemView) {
@@ -323,17 +329,9 @@ public class WebServiceActivity extends AppCompatActivity {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    if (searchMeal){
-                        Intent intent = new Intent(WebServiceActivity.this, MealDetailActivity.class);
-                        intent.putExtra("id", id);
-                        intent.putExtra("meal", mealName.getText().toString());
-                        intent.putExtra("area", area.getText().toString());
-                        intent.putExtra("instruction", instruction);
-                        intent.putExtra("category", category.getText().toString());
-                        startActivity(intent);
-                    }
-
+                    Intent intent = new Intent(WebServiceActivity.this, MealDetailActivity.class);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
                 }
             });
         }
